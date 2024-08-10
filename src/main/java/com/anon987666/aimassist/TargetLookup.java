@@ -39,72 +39,72 @@ import net.minecraft.entity.passive.*;
 
 public final class TargetLookup {
 
-    private static TargetLookup instance;
+	private static TargetLookup instance;
 
-    private static final Minecraft MC = Minecraft.getMinecraft();
+	private static final Minecraft MC = Minecraft.getMinecraft();
 
-    private static final Comparator<Entity> YAW_COMPARATOR = (e1, e2) -> {
-	final Entity player = MC.player;
+	private static final Comparator<Entity> YAW_COMPARATOR = (e1, e2) -> {
+		final Entity player = MC.player;
 
-	final float dist1 = abs(computeYawDistance(player, e1));
-	final float dist2 = abs(computeYawDistance(player, e2));
+		final float dist1 = abs(computeYawDistance(player, e1));
+		final float dist2 = abs(computeYawDistance(player, e2));
 
-	return Float.compare(dist1, dist2);
-    };
+		return Float.compare(dist1, dist2);
+	};
 
-    private static final Predicate<Entity> TYPE_FILTER = entity -> {
-	final boolean players = Settings.Targets.players;
-	final boolean mobs = Settings.Targets.mobs;
-	final boolean animals = Settings.Targets.animals;
+	private static final Predicate<Entity> TYPE_FILTER = entity -> {
+		final boolean players = Settings.Targets.players;
+		final boolean mobs = Settings.Targets.mobs;
+		final boolean animals = Settings.Targets.animals;
 
-	return (players && entity instanceof EntityOtherPlayerMP) || (mobs && entity instanceof EntityMob)
-		|| (animals && entity instanceof EntityAnimal);
-    };
+		return (players && entity instanceof EntityOtherPlayerMP) || (mobs && entity instanceof EntityMob)
+				|| (animals && entity instanceof EntityAnimal);
+	};
 
-    private static final Predicate<Entity> DEAD_FILTER = entity -> !entity.isDead;
+	private static final Predicate<Entity> DEAD_FILTER = entity -> !entity.isDead;
 
-    private static final Predicate<Entity> DISTANCE_FILTER = entity -> entity
-	    .getDistance(MC.player) <= Settings.Misc.targetFindDistance;
+	private static final Predicate<Entity> DISTANCE_FILTER = entity -> entity
+			.getDistance(MC.player) <= Settings.Misc.targetFindDistance;
 
-    private static final Predicate<Entity> ANGLE_FILTER = entity -> {
-	final float yawDistance = abs(computeYawDistance(MC.player, entity));
+	private static final Predicate<Entity> ANGLE_FILTER = entity -> {
+		final float yawDistance = abs(computeYawDistance(MC.player, entity));
 
-	return yawDistance <= Settings.Misc.rotationLimit;
-    };
+		return yawDistance <= Settings.Misc.rotationLimit;
+	};
 
-    private static final Predicate<Entity> IGNORED_FILTER = entity -> {
-	if (!Settings.Ignore.enableWhiteList) {
-	    return true;
+	private static final Predicate<Entity> IGNORED_FILTER = entity -> {
+		if (!Settings.Ignore.enableWhiteList) {
+			return true;
+		}
+
+		final String entityName = entity.getName();
+
+		for (String name : Settings.Ignore.ignored) {
+			if (name.equalsIgnoreCase(entityName)) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	public static TargetLookup instance() {
+		if (instance == null) {
+			instance = new TargetLookup();
+		}
+
+		return instance;
 	}
 
-	final String entityName = entity.getName();
+	private TargetLookup() {
 
-	for (String name : Settings.Ignore.ignored) {
-	    if (name.equalsIgnoreCase(entityName)) {
-		return false;
-	    }
 	}
 
-	return true;
-    };
+	public Optional<Entity> find() {
+		final Stream<Entity> entities = MC.world.loadedEntityList.stream();
 
-    public static TargetLookup instance() {
-	if (instance == null) {
-	    instance = new TargetLookup();
+		return entities.filter(DISTANCE_FILTER).filter(DEAD_FILTER).filter(ANGLE_FILTER).filter(TYPE_FILTER)
+				.filter(IGNORED_FILTER).sorted(YAW_COMPARATOR).findFirst();
 	}
-
-	return instance;
-    }
-
-    private TargetLookup() {
-
-    }
-
-    public Optional<Entity> find() {
-	final Stream<Entity> entities = MC.world.loadedEntityList.stream();
-
-	return entities.filter(DISTANCE_FILTER).filter(DEAD_FILTER).filter(ANGLE_FILTER).filter(TYPE_FILTER)
-		.filter(IGNORED_FILTER).sorted(YAW_COMPARATOR).findFirst();
-    }
 
 }

@@ -29,58 +29,58 @@ import net.minecraftforge.common.config.Config.*;
 
 public class Settings {
 
-    @Config(modid = AimAssist.MODID, name = "Aim targets")
-    public static class Targets {
+	@Config(modid = AimAssist.MODID, name = "Aim targets")
+	public static class Targets {
 
-	@Name("Players")
-	public static boolean players = true;
+		@Name("Players")
+		public static boolean players = true;
 
-	@Name("Mobs")
-	public static boolean mobs = true;
+		@Name("Mobs")
+		public static boolean mobs = true;
 
-	@Name("Animals")
-	public static boolean animals = false;
+		@Name("Animals")
+		public static boolean animals = false;
 
-    }
+	}
 
-    @Config(modid = AimAssist.MODID, name = "Aim white list")
-    public static class Ignore {
+	@Config(modid = AimAssist.MODID, name = "Aim white list")
+	public static class Ignore {
 
-	@Name("Ignored names")
-	public static String[] ignored = new String[0];
-	
-	@Name("Enable white list")
-	public static boolean enableWhiteList;
+		@Name("Ignored names")
+		public static String[] ignored = new String[0];
 
-    }
+		@Name("Enable white list")
+		public static boolean enableWhiteList;
 
-    @Config(modid = AimAssist.MODID, name = "Aim options")
-    public static class Misc {
+	}
 
-	@Name("Yaw speed")
-	@RangeInt(min = 0, max = 50)
-	@SlidingOption
-	public static int yawSpeed = 20;
+	@Config(modid = AimAssist.MODID, name = "Aim options")
+	public static class Misc {
 
-	@Name("Pitch speed")
-	@RangeInt(min = 0, max = 50)
-	@SlidingOption
-	public static int pitchSpeed = 15;
+		@Name("Yaw speed")
+		@RangeInt(min = 0, max = 50)
+		@SlidingOption
+		public static int yawSpeed = 20;
 
-	@Name("Aim time")
-	@RangeInt(min = 0, max = 1000)
-	@SlidingOption
-	public static int aimTime = 200;
+		@Name("Pitch speed")
+		@RangeInt(min = 0, max = 50)
+		@SlidingOption
+		public static int pitchSpeed = 15;
 
-	@Name("Rotation limit")
-	@RangeInt(min = 0, max = 180)
-	@SlidingOption
-	public static int rotationLimit = 80;
+		@Name("Aim time")
+		@RangeInt(min = 0, max = 1000)
+		@SlidingOption
+		public static int aimTime = 200;
 
-	@Name("Target find distance")
-	@RangeDouble(min = 1, max = 10)
-	@SlidingOption
-	public static double targetFindDistance = 5;
+		@Name("Rotation limit")
+		@RangeInt(min = 0, max = 180)
+		@SlidingOption
+		public static int rotationLimit = 80;
 
-    }
+		@Name("Target find distance")
+		@RangeDouble(min = 1, max = 10)
+		@SlidingOption
+		public static double targetFindDistance = 5;
+
+	}
 }

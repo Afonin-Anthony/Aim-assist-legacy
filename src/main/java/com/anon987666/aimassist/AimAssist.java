@@ -36,22 +36,22 @@ import net.minecraftforge.fml.common.eventhandler.*;
 @Mod(modid = AimAssist.MODID, name = AimAssist.NAME, version = AimAssist.VERSION)
 public class AimAssist {
 
-    public static final String MODID = "aimassist";
+	public static final String MODID = "aimassist";
 
-    public static final String NAME = "Aim assist";
+	public static final String NAME = "Aim assist";
 
-    public static final String VERSION = "1.0.0";
+	public static final String VERSION = "1.0.0";
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-	MinecraftForge.EVENT_BUS.register(this);
-	ClientCommandHandler.instance.registerCommand(new CommandHandler());
-    }
-
-    @SubscribeEvent
-    public void onConfigChangedEvent(OnConfigChangedEvent event) {
-	if (event.getModID().equals(MODID)) {
-	    ConfigManager.sync(MODID, Config.Type.INSTANCE);
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		MinecraftForge.EVENT_BUS.register(this);
+		ClientCommandHandler.instance.registerCommand(new CommandHandler());
 	}
-    }
+
+	@SubscribeEvent
+	public void onConfigChangedEvent(OnConfigChangedEvent event) {
+		if (event.getModID().equals(MODID)) {
+			ConfigManager.sync(MODID, Config.Type.INSTANCE);
+		}
+	}
 }

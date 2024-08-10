@@ -29,54 +29,54 @@ import static java.lang.Math.*;
 
 public final class MathUtil {
 
-    public static final double HALF_PI = Math.PI / 2D;
+	public static final double HALF_PI = Math.PI / 2D;
 
-    public static float clampDegree(float angle) {
-	return angle < 0F ? 360F - Math.abs(angle) % 360F : angle % 360F;
-    }
+	public static float clampDegree(float angle) {
+		return angle < 0F ? 360F - Math.abs(angle) % 360F : angle % 360F;
+	}
 
-    public static float clampPitchDirection(float pitch) {
-	return pitch < -90F ? -Math.abs(pitch) % 180F : pitch % 180F;
-    }
+	public static float clampPitchDirection(float pitch) {
+		return pitch < -90F ? -Math.abs(pitch) % 180F : pitch % 180F;
+	}
 
-    public static float clamp(float value, float min, float max) {
-	return Math.min(Math.max(value, min), max);
-    }
+	public static float clamp(float value, float min, float max) {
+		return Math.min(Math.max(value, min), max);
+	}
 
-    public static float distance(float alpha, float beta) {
-	final float phi = Math.abs(beta - alpha) % 360;
-	float distance = phi > 180 ? 360 - phi : phi;
-	final float sign = (alpha - beta >= 0 && alpha - beta <= 180) || (alpha - beta <= -180 && alpha - beta >= -360)
-		? 1
-		: -1;
-	distance *= sign;
-	return distance;
-    }
+	public static float distance(float alpha, float beta) {
+		final float phi = Math.abs(beta - alpha) % 360;
+		float distance = phi > 180 ? 360 - phi : phi;
+		final float sign = (alpha - beta >= 0 && alpha - beta <= 180) || (alpha - beta <= -180 && alpha - beta >= -360)
+				? 1
+				: -1;
+		distance *= sign;
+		return distance;
+	}
 
-    public static float computeYawDistance(Entity player, Entity target) {
-	final double xDiff = player.posX - target.posX;
-	final double zDiff = player.posZ - target.posZ;
+	public static float computeYawDistance(Entity player, Entity target) {
+		final double xDiff = player.posX - target.posX;
+		final double zDiff = player.posZ - target.posZ;
 
-	final float playerYaw = clampDegree(player.rotationYaw);
+		final float playerYaw = clampDegree(player.rotationYaw);
 
-	final float yaw = clampDegree((float) toDegrees(atan2(zDiff, xDiff) + HALF_PI));
+		final float yaw = clampDegree((float) toDegrees(atan2(zDiff, xDiff) + HALF_PI));
 
-	return distance(yaw, playerYaw);
-    }
+		return distance(yaw, playerYaw);
+	}
 
-    public static float computePitchDistance(Entity player, Entity target) {
-	final double xDiff = player.posX - target.posX;
-	final double zDiff = player.posZ - target.posZ;
-	final double yDiff = target.posY - player.posY;
+	public static float computePitchDistance(Entity player, Entity target) {
+		final double xDiff = player.posX - target.posX;
+		final double zDiff = player.posZ - target.posZ;
+		final double yDiff = target.posY - player.posY;
 
-	final float playerPitch = clampPitchDirection(player.rotationPitch);
+		final float playerPitch = clampPitchDirection(player.rotationPitch);
 
-	final double pitch = -toDegrees(atan2(yDiff, sqrt(xDiff * xDiff + zDiff * zDiff)));
+		final double pitch = -toDegrees(atan2(yDiff, sqrt(xDiff * xDiff + zDiff * zDiff)));
 
-	return clamp(distance((float) pitch, playerPitch), -90, 90) * -1;
-    }
+		return clamp(distance((float) pitch, playerPitch), -90, 90) * -1;
+	}
 
-    private MathUtil() {
-	throw new AssertionError("No MathUtil instances for you!");
-    }
+	private MathUtil() {
+		throw new AssertionError("No MathUtil instances for you!");
+	}
 }

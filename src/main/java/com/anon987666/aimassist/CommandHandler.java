@@ -33,67 +33,67 @@ import net.minecraft.util.text.*;
 
 public final class CommandHandler extends CommandBase {
 
-    private static final String NAME = "aimassist";
+	private static final String NAME = "aimassist";
 
-    private static final String USAGE = "aimassist <enable|disable|toggle>";
+	private static final String USAGE = "aimassist <enable|disable|toggle>";
 
-    private static final String ENABLE_ACTION = "enable";
+	private static final String ENABLE_ACTION = "enable";
 
-    private static final String DISABLE_ACTION = "disable";
+	private static final String DISABLE_ACTION = "disable";
 
-    private static final String TOGGLE_ACTION = "toggle";
+	private static final String TOGGLE_ACTION = "toggle";
 
-    private static final Aim AIM = Aim.instance();
+	private static final Aim AIM = Aim.instance();
 
-    private static void sendMessage(ICommandSender sender, String message) {
-	sender.sendMessage(new TextComponentString(message));
-    }
-
-    private static void printStatus(ICommandSender sender) {
-	sendMessage(sender, "\u00a7a\u00a7lAim assist " + (AIM.isEnabled() ? "enabled" : "disabled"));
-    }
-
-    @Override
-    public String getName() {
-	return NAME;
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender) {
-	return USAGE;
-    }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-	return true;
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-	if (args.length != 1) {
-	    throw new CommandException("\u00a74\u00a7lAim assist:\u00a7c Wrong usage");
+	private static void sendMessage(ICommandSender sender, String message) {
+		sender.sendMessage(new TextComponentString(message));
 	}
 
-	final String action = args[0];
-
-	if (action.equalsIgnoreCase(ENABLE_ACTION)) {
-	    AIM.setEnabled(true);
-	    printStatus(sender);
-	} else if (action.equalsIgnoreCase(DISABLE_ACTION)) {
-	    AIM.setEnabled(false);
-	    printStatus(sender);
-	} else if (action.equalsIgnoreCase(TOGGLE_ACTION)) {
-	    AIM.setEnabled(!AIM.isEnabled());
-	    printStatus(sender);
-	} else {
-	    throw new CommandException("\u00a74\u00a7lAim assist:\u00a7c Unknown action \"" + action + "\"");
+	private static void printStatus(ICommandSender sender) {
+		sendMessage(sender, "\u00a7a\u00a7lAim assist " + (AIM.isEnabled() ? "enabled" : "disabled"));
 	}
-    }
 
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
-	    BlockPos targetPos) {
-	return Arrays.asList(ENABLE_ACTION, DISABLE_ACTION, TOGGLE_ACTION);
-    }
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public String getUsage(ICommandSender sender) {
+		return USAGE;
+	}
+
+	@Override
+	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+		return true;
+	}
+
+	@Override
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+		if (args.length != 1) {
+			throw new CommandException("\u00a74\u00a7lAim assist:\u00a7c Wrong usage");
+		}
+
+		final String action = args[0];
+
+		if (action.equalsIgnoreCase(ENABLE_ACTION)) {
+			AIM.setEnabled(true);
+			printStatus(sender);
+		} else if (action.equalsIgnoreCase(DISABLE_ACTION)) {
+			AIM.setEnabled(false);
+			printStatus(sender);
+		} else if (action.equalsIgnoreCase(TOGGLE_ACTION)) {
+			AIM.setEnabled(!AIM.isEnabled());
+			printStatus(sender);
+		} else {
+			throw new CommandException("\u00a74\u00a7lAim assist:\u00a7c Unknown action \"" + action + "\"");
+		}
+	}
+
+	@Override
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+			BlockPos targetPos) {
+		return Arrays.asList(ENABLE_ACTION, DISABLE_ACTION, TOGGLE_ACTION);
+	}
 
 }
