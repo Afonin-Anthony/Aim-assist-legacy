@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2023 Anthony Afonin
+ * Copyright (c) 2024 Anthony Afonin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,34 +24,125 @@
 
 package com.anon987666.aimassist;
 
-import net.minecraftforge.client.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import net.minecraft.client.*;
+import net.minecraft.entity.*;
+import net.minecraft.util.math.*;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.*;
-import net.minecraftforge.common.config.*;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.*;
-import net.minecraftforge.fml.common.*;
-import net.minecraftforge.fml.common.Mod.*;
-import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.*;
+import net.minecraftforge.fml.common.gameevent.TickEvent.*;
 
-@Mod(modid = AimAssist.MODID, name = AimAssist.NAME, version = AimAssist.VERSION)
-public class AimAssist {
+public final class AimAssist {
 
-	public static final String MODID = "aimassist";
+	private static AimAssist instance;
 
-	public static final String NAME = "Aim assist";
+	private static final Minecraft MC = Minecraft.getMinecraft();
 
-	public static final String VERSION = "1.0.0";
+	private static final TargetLookup LOOKUP = TargetLookup.instance();
 
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(this);
-		ClientCommandHandler.instance.registerCommand(new CommandHandler());
+	private static final long DT = TimeUnit.MILLISECONDS.toNanos(5);
+
+	private boolean enabled;
+
+	private long currentTime = System.nanoTime();
+
+	private long accumulator;
+
+	private float aimTime;
+
+	private Optional<Entity> target = Optional.empty();
+
+	public static AimAssist instance() {
+		if (instance == null) {
+			instance = new AimAssist();
+		}
+
+		return instance;
+	}
+
+	private AimAssist() {
+
+	}
+
+	private static boolean isPlaying() {
+		return MC.world != null && MC.player != null && MC.currentScreen == null;
+	}
+
+	public void setEnabled(boolean enabled) {
+		if (enabled) {
+			MinecraftForge.EVENT_BUS.register(this);
+		} else {
+			MinecraftForge.EVENT_BUS.unregister(this);
+		}
+
+		this.enabled = enabled;
+		printStatus();
+	}
+
+	public void toggle() {
+		setEnabled(!isEnabled());
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	private void printStatus() {
+		final String status = "Aim assist " + (enabled ? "\u00a7a\u00a7lenabled" : "\u00a7c\u00a7ldisabled");
+		MC.player.sendStatusMessage(new TextComponentString(status), true);
+	}
+
+	/**
+	 * Adapted from {@link Entity#turn(float, float)}
+	 */
+	private void turn(Entity target, float delta) {
+		final Entity player = MC.player;
+
+		final float yaw = MathUtil.computeYawDistance(player, target);
+		final float pitch = MathUtil.computePitchDistance(player, target);
+
+		final float prevPitch = player.rotationPitch;
+		final float prevYaw = player.rotationYaw;
+
+		player.rotationYaw = player.rotationYaw + yaw * Settings.Misc.yawSpeed * delta;
+		player.rotationPitch = player.rotationPitch - pitch * Settings.Misc.pitchSpeed * delta;
+		player.rotationPitch = MathHelper.clamp(player.rotationPitch, -90f, 90f);
+
+		player.prevRotationPitch += player.rotationPitch - prevPitch;
+		player.prevRotationYaw += player.rotationYaw - prevYaw;
+	}
+
+	private void update(float delta) {
+		if (target.isPresent() && aimTime > 0) {
+			turn(target.get(), delta);
+			aimTime -= delta;
+		}
 	}
 
 	@SubscribeEvent
-	public void onConfigChangedEvent(OnConfigChangedEvent event) {
-		if (event.getModID().equals(MODID)) {
-			ConfigManager.sync(MODID, Config.Type.INSTANCE);
+	public void onClientTick(ClientTickEvent event) {
+		if (isPlaying() && MC.gameSettings.keyBindAttack.isKeyDown()) {
+			target = LOOKUP.find();
+			aimTime = Settings.Misc.aimTime / 1000f;
 		}
 	}
+
+	@SubscribeEvent
+	public void onRenderWorldLast(RenderWorldLastEvent event) {
+		final long newTime = System.nanoTime();
+		final long frameTime = newTime - currentTime;
+		currentTime = newTime;
+
+		accumulator += frameTime;
+
+		while (accumulator >= DT) {
+			update(DT / 1e9f);
+			accumulator -= DT;
+		}
+	}
+
 }

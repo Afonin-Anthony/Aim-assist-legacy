@@ -29,7 +29,7 @@ import net.minecraftforge.common.config.Config.*;
 
 public class Settings {
 
-	@Config(modid = AimAssist.MODID, name = "Aim targets")
+	@Config(modid = AimAssistMod.MODID, name = "Aim targets")
 	public static class Targets {
 
 		@Name("Players")
@@ -43,7 +43,7 @@ public class Settings {
 
 	}
 
-	@Config(modid = AimAssist.MODID, name = "Aim white list")
+	@Config(modid = AimAssistMod.MODID, name = "Aim white list")
 	public static class Ignore {
 
 		@Name("Ignored names")
@@ -54,7 +54,7 @@ public class Settings {
 
 	}
 
-	@Config(modid = AimAssist.MODID, name = "Aim options")
+	@Config(modid = AimAssistMod.MODID, name = "Aim options")
 	public static class Misc {
 
 		@Name("Yaw speed")

@@ -24,12 +24,14 @@
 
 package com.anon987666.aimassist;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
-import net.minecraft.command.*;
-import net.minecraft.server.*;
-import net.minecraft.util.math.*;
-import net.minecraft.util.text.*;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 public final class CommandHandler extends CommandBase {
 
@@ -43,15 +45,7 @@ public final class CommandHandler extends CommandBase {
 
 	private static final String TOGGLE_ACTION = "toggle";
 
-	private static final Aim AIM = Aim.instance();
-
-	private static void sendMessage(ICommandSender sender, String message) {
-		sender.sendMessage(new TextComponentString(message));
-	}
-
-	private static void printStatus(ICommandSender sender) {
-		sendMessage(sender, "\u00a7a\u00a7lAim assist " + (AIM.isEnabled() ? "enabled" : "disabled"));
-	}
+	private static final AimAssist AIMASSIST = AimAssist.instance();
 
 	@Override
 	public String getName() {
@@ -77,14 +71,11 @@ public final class CommandHandler extends CommandBase {
 		final String action = args[0];
 
 		if (action.equalsIgnoreCase(ENABLE_ACTION)) {
-			AIM.setEnabled(true);
-			printStatus(sender);
+			AIMASSIST.setEnabled(true);
 		} else if (action.equalsIgnoreCase(DISABLE_ACTION)) {
-			AIM.setEnabled(false);
-			printStatus(sender);
+			AIMASSIST.setEnabled(false);
 		} else if (action.equalsIgnoreCase(TOGGLE_ACTION)) {
-			AIM.setEnabled(!AIM.isEnabled());
-			printStatus(sender);
+			AIMASSIST.toggle();
 		} else {
 			throw new CommandException("\u00a74\u00a7lAim assist:\u00a7c Unknown action \"" + action + "\"");
 		}
