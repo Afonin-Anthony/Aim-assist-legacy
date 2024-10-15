@@ -12,7 +12,4 @@ If you want to use mods like [MacroKey](https://github.com/Matts/MacroKey) for t
 
 ## License
 Aim assist is provided under MIT license. Feel free to explore, make changes and share with friends!
-
-## Contributing
-find me gf pls..
  
